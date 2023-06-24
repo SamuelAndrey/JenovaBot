@@ -12,7 +12,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 public class JenovaBot extends TelegramLongPollingBot {
-    ConnectionMysql db_bot;
+    ConnectionMysql connection;
     TokenApi token = new TokenApi();
     
     public JenovaBot() {  
@@ -54,7 +54,7 @@ public class JenovaBot extends TelegramLongPollingBot {
                     Logger.getLogger(JenovaBot.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else {
-                String response = db_bot.getMessageByKeyword(messageText);
+                String response = connection.getMessageByKeyword(messageText);
                 sendResponse(update.getMessage().getChatId(), response);
             }
             
