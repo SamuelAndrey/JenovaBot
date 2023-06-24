@@ -17,7 +17,7 @@ public class JenovaBot extends TelegramLongPollingBot {
     
     public JenovaBot() {  
         try {
-            db_bot = new ConnectionMysql();
+            connection = new ConnectionMysql();
             run();
         } catch (TelegramApiException e) {
             e.printStackTrace();
