@@ -19,8 +19,10 @@ public class JenovaBot extends TelegramLongPollingBot {
     TokenApi token = new TokenApi();
     
     public JenovaBot() {  
+
+        connection = new ConnectionMysql();
+        
         try {
-            connection = new ConnectionMysql();
             run();
         } catch (TelegramApiException e) {
             e.printStackTrace();
@@ -32,7 +34,6 @@ public class JenovaBot extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().hasText()) {
             
             String messageText = update.getMessage().getText();
-            
             long chatId = update.getMessage().getChatId();
             
             User user = update.getMessage().getFrom();
@@ -40,7 +41,10 @@ public class JenovaBot extends TelegramLongPollingBot {
             String firstName = user.getFirstName();
             String lastName = user.getLastName();
             String username = user.getUserName();
-            String languageCode = user.getLanguageCode();
+            
+            if (username == null) username = "";
+            if (firstName == null) firstName = "";
+            if (lastName == null) lastName = "";
             
             SendMessage message = new SendMessage();
             message.setChatId(chatId);
@@ -54,28 +58,46 @@ public class JenovaBot extends TelegramLongPollingBot {
             if (command.equals("/gpt") && !parameter.equals("")) {
                 
                 if (decrementTokenGpt(userId) <= 0) {
-                    sendResponse(update.getMessage().getChatId(), "Token Chat GPT sudah habis.");
+                    sendResponse(update.getMessage().getChatId(), "Token Chat GPT sudah habis.", messageText);
                 } else {
                     try {
-                        sendResponse(chatId, new ChatGPT().gpt(parameter));
+                        sendResponse(chatId, new ApiChatGPT().gpt(parameter), messageText);
                     } catch (IOException ex) {
                         Logger.getLogger(JenovaBot.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             } else {
                 String response = getMessageByKeyword(messageText);
-                sendResponse(update.getMessage().getChatId(), response);
+                sendResponse(update.getMessage().getChatId(), response, messageText);
             }
         }
     }
     
-    private void sendResponse(Long chatId, String response) {
+    private void sendResponse(Long chatId, String response, String request) {
+        
         SendMessage message = new SendMessage(Long.toString(chatId), response);
         message.enableMarkdown(true);
+        
         try {
             execute(message);
+            addHistoryMessage(chatId, response, request);
         } catch (TelegramApiException e) {
             e.printStackTrace();
+        }
+    }
+    
+    private void addHistoryMessage(Long chatId, String response, String request) {
+        PreparedStatement statement = null;
+        
+        try {
+            String updateQuery = "INSERT INTO tb_history (id_user, request, response) VALUES (?, ?, ?)";
+            statement = connection.getConnection().prepareStatement(updateQuery);
+            statement.setLong(1, chatId);
+            statement.setString(2, request);
+            statement.setString(3, response);
+            statement.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(JenovaBot.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -199,15 +221,14 @@ public class JenovaBot extends TelegramLongPollingBot {
             String selectQuery = "SELECT * FROM tb_broadcast_info";
             statement = connection.getConnection().prepareStatement(selectQuery);
             ResultSet resultSet = statement.executeQuery();
-
-            if (resultSet.next()) {
+            
+            while (resultSet.next()) {
                 chatId = resultSet.getLong("id_user");
-                sendResponse(chatId, message);
+                sendResponse(chatId, message, "THIS IS BROADCAST FROM ADMIN");
             }
         } catch (SQLException ex) {
             Logger.getLogger(JenovaBot.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
     
     public void run() throws TelegramApiException {

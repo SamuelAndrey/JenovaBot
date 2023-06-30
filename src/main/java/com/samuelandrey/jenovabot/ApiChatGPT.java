@@ -20,18 +20,18 @@ import com.google.gson.JsonObject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ChatGPT {
+public class ApiChatGPT {
 
     public String getChatGPTResponse(String message) throws IOException, URISyntaxException {
     
-        TokenApi token = new TokenApi();
+        TokenApi TOKEN = new TokenApi();
         String OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
         
         CloseableHttpClient httpClient = HttpClients.createDefault();
 
         URI uri = new URI(OPENAI_API_URL);
         HttpPost httpPost = new HttpPost(uri);
-        httpPost.setHeader("Authorization", "Bearer " + token.getTokenChatGpt());
+        httpPost.setHeader("Authorization", "Bearer " + TOKEN.getTokenChatGpt());
         httpPost.setHeader("Content-Type", "application/json");
 
         JsonObject payload = new JsonObject();
@@ -91,7 +91,7 @@ public class ChatGPT {
             return output;
             
         } catch (URISyntaxException ex) {
-            Logger.getLogger(ChatGPT.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ApiChatGPT.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;    
     }

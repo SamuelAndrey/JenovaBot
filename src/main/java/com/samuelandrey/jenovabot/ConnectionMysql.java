@@ -35,28 +35,5 @@ public class ConnectionMysql {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    public String getMessageByKeyword(String command) {
-        String message = null;
-        String unknownResponse = "Jenova Bot\n\nBerikut adalah command yang tersedia :\nChat GPT\n/gpt 'spasi' prompt";
-        String sql = "SELECT * FROM tb_keyword WHERE command = ?";
-
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, command);
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    message = resultSet.getString("response");
-                } else {
-                    message = unknownResponse;
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return message;
-    }
-    
+    }   
 }
