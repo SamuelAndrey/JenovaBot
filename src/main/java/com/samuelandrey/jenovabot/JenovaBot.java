@@ -66,6 +66,13 @@ public class JenovaBot extends TelegramLongPollingBot {
                         Logger.getLogger(JenovaBot.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
+                
+            } else if (messageText.equals("/mytoken")) {
+                String response = "Hello " + firstName + " your remaining token for Chat GPT : count  " + getRemainingToken(userId);
+                sendResponse(chatId, response, messageText);
+            } else if (messageText.equals("/myinfo")) {
+                String response = "UserID/ChatID\t: " + userId +"\nUsername\t\t: " + username + "\nFirstname\t\t: " + firstName + "\nLastname\t\t: " + lastName;
+                sendResponse(chatId, response, messageText);
             } else {
                 String response = getMessageByKeyword(messageText);
                 sendResponse(update.getMessage().getChatId(), response, messageText);
@@ -84,6 +91,24 @@ public class JenovaBot extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+    }
+    
+    private int getRemainingToken(Long idUser) {
+        PreparedStatement statement = null;
+        int token = 0;
+        try {
+            String selectQuery = "SELECT * FROM tb_user WHERE id_user = ?";
+            statement = connection.getConnection().prepareStatement(selectQuery);
+            statement.setLong(1, idUser);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                token = resultSet.getInt("token");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JenovaBot.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return token;
     }
     
     private void addHistoryMessage(Long chatId, String response, String request) {

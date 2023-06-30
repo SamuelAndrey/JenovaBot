@@ -172,6 +172,7 @@ public class FormDashboard extends javax.swing.JFrame {
         jMenu1 = new javax.swing.JMenu();
         tabHistory = new javax.swing.JMenu();
         tabUser = new javax.swing.JMenu();
+        tabAdmin = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(javax.swing.UIManager.getDefaults().getColor("Button.default.focusColor"));
@@ -221,7 +222,6 @@ public class FormDashboard extends javax.swing.JFrame {
         txtResponse.setColumns(20);
         txtResponse.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         txtResponse.setRows(5);
-        txtResponse.setBorder(javax.swing.BorderFactory.createCompoundBorder());
         jScrollPane2.setViewportView(txtResponse);
 
         btnAddKey.setBackground(java.awt.SystemColor.activeCaption);
@@ -390,6 +390,14 @@ public class FormDashboard extends javax.swing.JFrame {
             }
         });
         jMenuBar1.add(tabUser);
+
+        tabAdmin.setText("Admin");
+        tabAdmin.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tabAdminMouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(tabAdmin);
 
         setJMenuBar(jMenuBar1);
 
@@ -692,6 +700,10 @@ public class FormDashboard extends javax.swing.JFrame {
         new FormUser().setVisible(true);
     }//GEN-LAST:event_tabUserMouseClicked
 
+    private void tabAdminMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabAdminMouseClicked
+        new FormAdmin().setVisible(true);
+    }//GEN-LAST:event_tabAdminMouseClicked
+
     public static void main(String args[]) {
         
         /* Set the Nimbus look and feel */
@@ -753,6 +765,7 @@ public class FormDashboard extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JMenu tabAdmin;
     private javax.swing.JMenu tabHistory;
     private javax.swing.JMenu tabUser;
     private javax.swing.JTable tblBroadcast;
