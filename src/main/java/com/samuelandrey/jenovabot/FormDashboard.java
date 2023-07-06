@@ -13,7 +13,6 @@ import javax.swing.table.DefaultTableModel;
 public class FormDashboard extends javax.swing.JFrame {
     
     Boolean editKeyword = false;
-    Boolean editBroadcast = false;
     
     JenovaBot jenova = new JenovaBot();
     ConnectionMysql connection;
@@ -168,6 +167,7 @@ public class FormDashboard extends javax.swing.JFrame {
         jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
+        btnRefreshUser = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         tabHistory = new javax.swing.JMenu();
@@ -369,6 +369,16 @@ public class FormDashboard extends javax.swing.JFrame {
         jLabel12.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel12.setText("Username");
 
+        btnRefreshUser.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        btnRefreshUser.setText("Refresh");
+        btnRefreshUser.setFocusable(false);
+        btnRefreshUser.setOpaque(true);
+        btnRefreshUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefreshUserActionPerformed(evt);
+            }
+        });
+
         jMenuBar1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
         jMenu1.setText("Dashboard");
@@ -458,10 +468,13 @@ public class FormDashboard extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtUsernameBC, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(txtUsernameBC, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(btnRefreshUser, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addComponent(txtLastNameBC, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 462, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addContainerGap(16, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -503,7 +516,9 @@ public class FormDashboard extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(cmbIdUserBC, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtUsernameBC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(txtUsernameBC, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnRefreshUser, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel9)
@@ -527,7 +542,7 @@ public class FormDashboard extends javax.swing.JFrame {
                         .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnSendBroadcast, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
 
         pack();
@@ -704,6 +719,11 @@ public class FormDashboard extends javax.swing.JFrame {
         new FormAdmin().setVisible(true);
     }//GEN-LAST:event_tabAdminMouseClicked
 
+    private void btnRefreshUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshUserActionPerformed
+        setComboBoxBroadcast();
+        readBroadcastInfo();
+    }//GEN-LAST:event_btnRefreshUserActionPerformed
+
     public static void main(String args[]) {
         
         /* Set the Nimbus look and feel */
@@ -744,6 +764,7 @@ public class FormDashboard extends javax.swing.JFrame {
     private javax.swing.JButton btnDeleteKey;
     private javax.swing.JButton btnEditKey;
     private javax.swing.JButton btnInsertBC;
+    private javax.swing.JButton btnRefreshUser;
     private javax.swing.JButton btnSaveKey;
     private javax.swing.JButton btnSendBroadcast;
     private javax.swing.JComboBox<String> cmbIdUserBC;

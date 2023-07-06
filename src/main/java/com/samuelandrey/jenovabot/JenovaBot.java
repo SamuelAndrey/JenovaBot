@@ -35,7 +35,6 @@ public class JenovaBot extends TelegramLongPollingBot {
             
             String messageText = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
-            
             User user = update.getMessage().getFrom();
             long userId = user.getId();
             String firstName = user.getFirstName();
@@ -58,25 +57,66 @@ public class JenovaBot extends TelegramLongPollingBot {
             if (command.equals("/gpt") && !parameter.equals("")) {
                 
                 if (decrementTokenGpt(userId) <= 0) {
-                    sendResponse(update.getMessage().getChatId(), "Token Chat GPT sudah habis.", messageText);
+                    
+                    sendResponse(chatId, "Token Chat GPT sudah habis. kami akan mencoba mencari di kamus kami", messageText);
+                    sendResponse(chatId, searchPromptGPT(parameter), messageText);
+                    
                 } else {
+                    
                     try {
-                        sendResponse(chatId, new ApiChatGPT().gpt(parameter), messageText);
+                        sendResponseChatGPT(chatId, new ApiChatGPT().gpt(parameter), messageText);
                     } catch (IOException ex) {
                         Logger.getLogger(JenovaBot.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
                 
             } else if (messageText.equals("/mytoken")) {
+                
                 String response = "Hello " + firstName + " your remaining token for Chat GPT : count  " + getRemainingToken(userId);
                 sendResponse(chatId, response, messageText);
+                
             } else if (messageText.equals("/myinfo")) {
+                
                 String response = "UserID/ChatID\t: " + userId +"\nUsername\t\t: " + username + "\nFirstname\t\t: " + firstName + "\nLastname\t\t: " + lastName;
                 sendResponse(chatId, response, messageText);
+                
             } else {
+                
                 String response = getMessageByKeyword(messageText);
                 sendResponse(update.getMessage().getChatId(), response, messageText);
             }
+        }
+    }
+    
+    private String searchPromptGPT(String prompt) {
+        PreparedStatement statement = null;
+        try {
+            String selectQuery = "SELECT * FROM tb_chat_gpt WHERE MATCH(prompt) AGAINST(? IN NATURAL LANGUAGE MODE)";
+            statement = connection.getConnection().prepareStatement(selectQuery);
+            statement.setString(1, prompt);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getString("response");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JenovaBot.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return "Maaf kata kunci tidak terdaftar dalam kamus kami. Mohon hubungi administrator dengan akun @samuelandrey untuk menambahkan token Chat GPT anda.";
+    }
+        
+    
+    private void addBankChatGPT(String prompt, String response) {
+        PreparedStatement statement = null;
+        
+        try {
+            String updateQuery = "INSERT INTO tb_chat_gpt (prompt, response) VALUES (?, ?)";
+            statement = connection.getConnection().prepareStatement(updateQuery);
+            statement.setString(1, prompt);
+            statement.setString(2, response);
+            statement.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(JenovaBot.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -88,6 +128,23 @@ public class JenovaBot extends TelegramLongPollingBot {
         try {
             execute(message);
             addHistoryMessage(chatId, response, request);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private void sendResponseChatGPT(Long chatId, String response, String request) {
+        
+        SendMessage message = new SendMessage(Long.toString(chatId), response);
+        message.enableMarkdown(true);
+        
+        String command = request.split(" ")[0];
+        String parameter = request.substring(command.length()).trim();
+        
+        try {
+            execute(message);
+            addHistoryMessage(chatId, response, request);
+            addBankChatGPT(parameter, response);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
