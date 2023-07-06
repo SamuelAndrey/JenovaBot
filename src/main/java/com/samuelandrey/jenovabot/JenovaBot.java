@@ -58,7 +58,7 @@ public class JenovaBot extends TelegramLongPollingBot {
                 
                 if (decrementTokenGpt(userId) <= 0) {
                     
-                    sendResponse(chatId, "Token Chat GPT sudah habis. kami akan mencoba mencari di kamus kami", messageText);
+                    sendResponse(chatId, "Token Chat GPT sudah habis. kami akan mencoba mencarikan prompt anda di kamus kami", messageText);
                     sendResponse(chatId, searchPromptGPT(parameter), messageText);
                     
                 } else {
